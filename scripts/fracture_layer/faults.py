@@ -12,7 +12,7 @@ import subprocess
 import pandas as pd 
 
 src_path = os.getcwd()
-jobname = src_path + "/middle_layer"
+jobname = src_path + "/faults"
 dfnFlow_file = os.getcwd() + '/fehmn.files'
 
 DFN = DFNWORKS(jobname,
@@ -20,62 +20,33 @@ DFN = DFNWORKS(jobname,
                flow_solver="FEHM",
                ncpu=8)
 
-DFN.params['domainSize']['value'] = [10000.0, 10000.0, 3000.0]
+DFN.params['domainSize']['value'] = [10000.0, 10000.0, 10000.0]
 DFN.params['h']['value'] = 100
 DFN.params['disableFram']['value'] = True
 DFN.params['keepIsolatedFractures']['value'] = True
 DFN.params['domainCenter']['value'] = [0, 0, 2500]
 
-## Layer boundaries - set to matrix perm 
-mat_perm = 1.0e-15
-DFN.add_user_fract(shape='rect',
-                   radii=5000,
-                   translation=[0, 0, -1500],
-                   normal_vector=[0, 0, 1],
-                   permeability=mat_perm)
 
+# Individual fractures
 DFN.add_user_fract(shape='rect',
-                   radii=5000,
+                   radii=3000,
                    translation=[0, 0, 1500],
-                   normal_vector=[0, 0, 1],
-                   permeability=mat_perm)
+                   normal_vector=[1, 0.2, 4],
+                   aperture=1.0e-4)
 
-# # Individual fractures
-# DFN.add_user_fract(shape='rect',
-#                    radii=2000,
-#                    translation=[0, 0, 3000],
-#                    normal_vector=[1, 0, 0],
-#                    aperture=1.0e-4)
-
-# DFN.add_user_fract(shape='rect',
-#                    radii=2000,
-#                    translation=[0, 0, 3000],
-#                    normal_vector=[0, 1, 0],
-#                    aperture=1.0e-4)
-
-
-# Add one family in layer #1
-DFN.add_fracture_family(shape="ell",
-                        distribution="tpl",
-                        kappa=0.1,
-                        theta=0.0,
-                        phi=0.0,
-                        alpha=1.2,
-                        min_radius=100.0,
-                        max_radius=1000.0,
-                        p32=0.0001,
-                        hy_variable="aperture",
-                        hy_function="constant",
-                        hy_params={"mu": 1e-4})
-
+DFN.add_user_fract(shape='rect',
+                   radii=3000,
+                   translation=[0, 0, 1500],
+                   normal_vector=[0.1, 1, 0],
+                   aperture=1.0e-4)
 
 
 DFN.make_working_directory(delete=True)
 DFN.check_input()
 DFN.create_network()
 DFN.mesh_network()
-DFN.to_pickle("middle_layer")
-os.rename('reduced_mesh.inp', 'middle_layer.inp')
+DFN.to_pickle("faults")
+os.rename('reduced_mesh.inp', 'faults.inp')
 exit() 
 DFN.map_to_continuum(l=1000, orl=1)
 exit()

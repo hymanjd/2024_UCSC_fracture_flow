@@ -59,34 +59,54 @@ DFN.domain = {"x": 10000, "y": 10000, "z": 10000 }
 
 src_dir = os.getcwd()
 
-# # Individual fractures
-# DFN.add_user_fract(shape='rect',
-#                    radii=5000,
-#                    translation=[0, 0, 3000],
-#                    normal_vector=[1, 0, 0],
-#                    aperture=1.0e-4)
 
-# DFN.add_user_fract(shape='rect',
-#                    radii=5000,
-#                    translation=[0, 0, 3000],
-#                    normal_vector=[0, 1, 0],
-#                    aperture=1.0e-4)
+# os.symlink('middle_layer/middle_layer.inp', 'middle_layer.inp')
+# os.symlink('faults/faults.inp', 'faults.inp')
 
+
+lagrit_script = """"
+## prior to running you need to copy the reduced_mesh from the top & bottom DFN here (or symbolic link)
+## also copy the *pkl files
+# to run 
+# lagrit < combine_mesh.lgi 
+
+# read in mesh 1 
+read / middle_layer.inp / mo_middle
+
+# read in mesh 2 
+read / faults.inp / mo_faults /
+
+# combine mesh 1 and mesh 2 to make final mesh
+addmesh / merge / mo_dfn / mo_middle / mo_faults
+
+# write to file 
+dump / combined_dfn.inp / mo_dfn 
+dump / reduced_mesh.inp / mo_dfn 
+
+finish 
+"""
+
+with open('combine_dfn.lgi', 'w') as fp:
+    fp.write(lagrit_script)
+
+import subprocess
+subprocess.call('lagrit < combine_dfn.lgi', shell = True)
 
 
 DFN.make_working_directory(delete=True)
 DFN.check_input()
 
-
-MIDDLE_DFN = DFNWORKS(pickle_file = f"{src_dir}/output_pd_layer_v2/middle_layer.pkl")
+FAULT_DFN = DFNWORKS(pickle_file = f"{src_dir}/faults/faults.pkl")
+MIDDLE_DFN = DFNWORKS(pickle_file = f"{src_dir}/middle_layer/middle_layer.pkl")
 
 ## combine DFN
-DFN.num_frac = MIDDLE_DFN.num_frac  
-DFN.centers = MIDDLE_DFN.centers
-DFN.polygons = MIDDLE_DFN.polygons
-DFN.normal_vectors = MIDDLE_DFN.normal_vectors
+## combine DFN
+DFN.num_frac = FAULT_DFN.num_frac + MIDDLE_DFN.num_frac 
+DFN.centers = np.concatenate((FAULT_DFN.centers, MIDDLE_DFN.centers))
+DFN.polygons = FAULT_DFN.polygons.copy() 
+DFN.polygons = DFN.polygons| MIDDLE_DFN.polygons
+DFN.normal_vectors = np.concatenate((FAULT_DFN.normal_vectors, MIDDLE_DFN.normal_vectors))
 
-os.symlink(f"{src_dir}/output_pd_layer_v2/reduced_mesh.inp", "reduced_mesh.inp")
-
+os.symlink(f"{src_dir}/reduced_mesh.inp", "reduced_mesh.inp")
 
 DFN.map_to_continuum(l = 1000, orl = 3)
