@@ -8,20 +8,8 @@
 from pydfnworks import *
 import os
 import numpy as np
-
-def translate_DFN(DFN, z0, offset = 0):
-    for i in range(DFN.num_frac):
-        DFN.centers[i] += [0,0,z0]
-
-    for i in range(1,DFN.num_frac+1):
-        key = f'fracture-{i}'
-        for j in range(len(DFN.polygons[key])):
-            DFN.polygons[key][j] += [0,0,z0]
-        if offset > 0:
-            new_key = f'fracture-{i + offset}'
-            DFN.polygons[new_key] = DFN.polygons[key] 
-
-    return DFN 
+import subprocess
+import pandas as pd 
 
 
 jobname = "combined_UDFM"
@@ -33,7 +21,7 @@ DFN.params['disableFram']['value'] = True
 DFN.params['keepIsolatedFractures']['value'] = True
 
 
-# Add one family in layer #1
+# DUMMY FRACTURE FAMILY, needed to trick code 
 DFN.add_fracture_family(shape="ell",
                         distribution="tpl",
                         kappa=0.1,
@@ -47,7 +35,7 @@ DFN.add_fracture_family(shape="ell",
                         hy_function="constant",
                         hy_params={"mu": 1e-4})
 
-DFN.h = 0.1
+DFN.h = 1000 
 DFN.x_min = -5000
 DFN.y_min = -5000
 DFN.z_min = -5000
@@ -110,3 +98,37 @@ DFN.normal_vectors = np.concatenate((FAULT_DFN.normal_vectors, MIDDLE_DFN.normal
 os.symlink(f"{src_dir}/reduced_mesh.inp", "reduced_mesh.inp")
 
 DFN.map_to_continuum(l = 1000, orl = 3)
+DFN.upscale(mat_perm=1e-15, mat_por=0.01)
+
+# load z values 
+with open('octree_dfn.inp') as finp:
+    header = finp.readline().split()
+    num_nodes = int(header[0])
+    print(num_nodes)
+    x = np.zeros(num_nodes)
+    y = np.zeros(num_nodes)
+    z = np.zeros(num_nodes)
+    for i in range(num_nodes):
+        line = finp.readline().split()
+        x[i] = float(line[1])
+        y[i] = float(line[2])
+        z[i] = float(line[3])
+material_id = np.genfromtxt("tag_frac.dat").astype(int)
+
+df = pd.DataFrame({'x': x, 'y': y, 'z': z, 'material': material_id, })
+print(df)
+df.to_pickle('octree_nodes.pkl')
+
+lagrit_script = """
+read / octree_dfn.inp / mo1
+cmo / addatt / mo1 / frac_index / vdouble / scalar / nnodes
+cmo / setatt / mo1 / frac_index / 1 0 0 / 1
+cmo / readatt / mo1 / frac_index / 1, 0, 0 / tag_frac.dat 
+dump / tmp.inp / mo1 
+finish
+"""
+with open("color_mesh.lgi", "w") as fp:
+    fp.write(lagrit_script)
+
+subprocess.call('lagrit < color_mesh.lgi', shell = True)
+
