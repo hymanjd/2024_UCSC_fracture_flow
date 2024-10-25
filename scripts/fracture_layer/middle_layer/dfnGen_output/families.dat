@@ -1,0 +1,21 @@
+UserDefined Rectangle Family: -1
+
+Ellipse Family: 1
+Global Family: 1
+Number of Vertices: 8
+Aspect Ratio: 1
+P32 (Fracture Intensity) Target: 0.0001
+Beta Distribution (Rotation Around Normal Vector): Uniform
+Theta-rad: 0
+Theta-deg: 0
+Phi-rad: 0
+Phi-deg: 0
+Kappa: 0.1
+Layer: Entire domain
+Region: Entire domain
+Distribution: Truncated Power-Law
+Alpha: 1.2
+Minimum Radius (m): 100
+Maximum Radius (m): 1000
+Family Insertion Probability: 1
+

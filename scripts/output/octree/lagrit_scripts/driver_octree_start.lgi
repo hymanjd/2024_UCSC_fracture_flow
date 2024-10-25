@@ -1,0 +1,139 @@
+# 
+# LaGriT control files to build an octree refined hex mesh with refinement
+# based on intersection of hex mesh with a DFN triangulation mesh
+#
+# driver_octree.lgi
+#   parameters_octree_dfn.mlgi
+#   build_octree.mlgi
+#       intersect_refine.mlgi
+#   hex_to_tet.mlgi
+#   remove_cells.mlgi
+#
+# Define some parameters
+#
+infile parameters_octree_dfn.mlgi
+#
+# Read in DFN mesh
+#
+read / FTYPE / FNAME / MODFN
+cmo / printatt / MODFN / -xyz- / minmax
+#
+# Octree refined orthogonal mesh based on intersection with DFN mesh
+#
+infile build_octree.mlgi
+#
+# Identify cells in hex mesh that are intersected by DFN mesh
+#
+# This is the last pass through intersect_elements in order to figure out
+# which cells in the fully refined hex mesh are intersected by the dfn mesh
+#
+intersect_elements / MOHEX / MODFN / if_int
+eltset / einter / if_int / ne / 0
+pset / pinter / eltset einter
+#
+# Use the itetclr(cell) and imt(vertex) attribute to hold the information
+#
+cmo / setatt / MOHEX / itetclr / 1 0 0 / 1
+cmo / setatt / MOHEX / itetclr / eltset get einter / 2
+cmo / setatt / MOHEX / imt / 1 0 0 / 1
+cmo / setatt / MOHEX / imt / pset get pinter / 2
+#
+# Output final hex mesh
+#
+#dump / avs2 / tmp_hex_refine.inp / MOHEX
+#
+# Same as above but for np1 hex mesh
+#
+intersect_elements / MOHEX_np1 / MODFN / if_int
+eltset / einter / if_int / ne / 0
+pset / pinter / eltset einter
+#
+# See above
+#
+cmo / setatt / MOHEX_np1 / itetclr / 1 0 0 / 1
+cmo / setatt / MOHEX_np1 / itetclr / eltset get einter / 2
+cmo / setatt / MOHEX_np1 / imt / 1 0 0 / 1
+cmo / setatt / MOHEX_np1 / imt / pset get pinter / 2
+#dump / avs2 / tmp_hex_np1_refine.inp / MOHEX_np1
+#
+# Convert the hex mesh to a tet mesh
+#
+infile hex_to_tet.mlgi
+#
+# Modify the hex data structure from a full octree data structure
+# to one in which only the highest level of refined hex is maintained
+# and all parent cells are stripped out of the data structure
+#
+grid2grid / tree_to_fe / mohex2 / MOHEX
+#dump / avs / octree_hex_mesh.inp / MOHEX
+#
+cmo / delete / MOHEX
+cmo / select / mohex2
+#
+# Remove all but the most refined hex cells
+#
+loop / do / NTIMEs / 0 N_OCTREE_REFINE_M1 1 / loop_end &
+infile remove_cells.mlgi
+#
+cmo / select / mohex2
+cmo / DELATT / mohex2 / if_int
+intersect_elements / mohex2 / MODFN / if_int
+cmo / select / mohex2
+eltset / edelete / if_int / eq / 0
+rmpoint / element / eltset get edelete
+eltset / edelete / release
+rmpoint / compress
+#
+dump / avs / mohex2.inp / mohex2 
+dump / avs / MOTET_np1.inp / MOTET_np1
+dump / avs / MOTET.inp / MOTET
+#
+cmo / select / MOTET
+#
+#
+cmo / modatt / MOTET / itp / ioflag / l
+cmo / modatt / MOTET / isn / ioflag / l
+cmo / modatt / MOTET / icr / ioflag / l
+# #
+
+define / ZONE / 1
+define / FOUT / boundary_top
+pset / top / attribute / zic / 1 0 0 / gt / ZMAX
+pset / top / zone / FOUT / ascii / ZONE
+
+define / ZONE / 2
+define / FOUT / boundary_bottom
+pset / bottom / attribute / zic / 1 0 0 / lt / ZMIN
+pset / bottom / zone / FOUT / ascii / ZONE
+
+define / ZONE / 3
+define / FOUT / boundary_left_w
+pset / left_w / attribute / xic / 1 0 0 / lt / XMIN
+pset / left_w / zone / FOUT / ascii / ZONE
+
+define / ZONE / 4
+define / FOUT / boundary_front_n
+pset / front_n / attribute / yic / 1 0 0 / gt / YMAX
+pset / front_n / zone / FOUT / ascii / ZONE
+
+define / ZONE / 5
+define / FOUT / boundary_right_e
+pset / right_e / attribute / xic / 1 0 0 / gt / XMAX
+pset / right_e / zone / FOUT / ascii / ZONE
+
+define / ZONE / 6
+define / FOUT / boundary_back_s
+pset / back_s / attribute / yic / 1 0 0 / lt / YMIN
+pset / back_s / zone / FOUT / ascii / ZONE
+
+           
+trans / 1 0 0 / 0. 0. 0. / 0, 0, 0 
+
+           
+dump / pflotran / full_mesh / MOTET / nofilter_zero
+dump / avs2 /         octree_dfn.inp / MOTET
+dump / coord  /       octree_dfn     / MOTET
+dump / stor /         octree_dfn     / MOTET
+dump / zone_imt /     octree_dfn     / MOTET
+dump / zone_outside / octree_dfn     / MOTET
+finish

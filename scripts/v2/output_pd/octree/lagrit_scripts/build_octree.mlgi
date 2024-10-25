@@ -1,0 +1,30 @@
+cmo / create / MOHEX / / / hex
+createpts / brick / xyz / NX NY NZ / X0 Y0 Z0 / X1 Y1 Z1 / 1 1 1
+cmo / setatt / MOHEX / imt / 1 0 0 / 1
+cmo / setatt / MOHEX / itetclr / 1 0 0 / 1
+resetpts / itp
+# 
+# Print to screen and logfiles the extents of the hex mesh and dfn mesh
+#
+cmo / printatt / MOHEX / -xyz- / minmax
+cmo / select / MODFN
+cmo / printatt / MODFN / -xyz- / minmax
+#
+# Generate copy of hex mesh for upscaling
+#
+cmo / copy / MOHEX_np1 / MOHEX
+#
+# Loop through steps to intersect dfn mesh (MODFN) with hex mesh (MOHEX)
+# and refine hex mesh based on cell intersections. Loop through 
+# N_OCTREE_REFINE times
+#
+loop / do / NTIMEs / 1 N_OCTREE_REFINE 1 / loop_end &
+infile intersect_refine.mlgi
+# 
+# See above - except do it once additional time ("np1")
+#
+loop / do / NTIMEs / 1 N_OCTREE_np1 1 / loop_end &
+infile intersect_refine_np1.mlgi
+#
+finish
+    

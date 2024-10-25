@@ -1,0 +1,5 @@
+Format: xRadius yRadius Family# Removed (-2 = userPolygon, -1 = userRectangle, 0 = userEllipse, > 0 is family in order of famProb)
+5000 5000 -1
+5000 5000 -1
+2000 2000 -1
+2000 2000 -1

@@ -1,0 +1,46 @@
+#
+# Convert the octree hex mesh to tet mesh by connecting the
+# octree vertex collection to a Delaunay mesh 
+#
+cmo / create / MOTET
+copypts / MOTET / MOHEX
+cmo / select / MOTET
+filter 1 0 0
+rmpoint / compress
+cmo / setatt / MOTET / imt / 1 0 0 / 1
+cmo / setatt / MOTET / itp / 1 0 0 / 0
+#
+# Sort and reorder the nodes based on coordinates
+#
+sort / MOTET / index / ascending / ikey / xic yic zic
+reorder / MOTET / ikey
+cmo / DELATT / MOTET / ikey
+#
+# Connect
+#
+connect / noadd
+cmo / setatt / MOTET / itetclr / 1 0 0 / 1
+resetpts / itp
+#
+# Do the same for np1 mesh
+#
+cmo / create / MOTET_np1
+copypts / MOTET_np1 / MOHEX_np1
+cmo / select / MOTET_np1
+filter 1 0 0 
+rmpoint / compress
+cmo / setatt / MOTET_np1 / imt / 1 0 0 / 1
+cmo / setatt / MOTET_np1 / itp / 1 0 0 / 0
+#
+# See above
+#
+sort / MOTET_np1 / index / ascending / ikey / xic yic zic
+reorder / MOTET_np1 / ikey
+cmo / DELATT / MOTET_np1 / ikey
+#
+connect / noadd
+cmo / setatt / MOTET_np1 / itetclr / 1 0 0 / 1
+resetpts / itp
+#
+finish
+    

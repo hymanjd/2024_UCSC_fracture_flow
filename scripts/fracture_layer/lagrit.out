@@ -1,0 +1,101 @@
+ 
+ 
+*               * * * * * * * * * * * * * * * * * * * * * * * *                 
+*               *                                             *                 
+*               *    Program:  LaGriT V3.3.4   Darwin         *                 
+*               *    Compiler Name: AppleClang                *                 
+*               *    Compiler Version: 14.0.0.14000029        *                 
+*               *    Date Compile: 2024/10/22                 *                 
+*               *    Run Time: 2024/Oct 24  14:32:12          *                 
+*               *    Manual:   https://lagrit.lanl.gov        *                 
+*               *                                             *                 
+*               * * * * * * * * * * * * * * * * * * * * * * * *                 
+ 
+                               -----oOo-----                                    
+             LaGriT V3 LA-CC-15-069  https://github.com/lanl/LaGriT             
+  Copyright 2016. Triad National Security, LLC.  All rights reserved. This      
+  program was produced under U.S. Government contract 89233218CNA000001         
+  for Los Alamos National Laboratory (LANL), which is operated by Triad         
+  National Security, LLC for the U.S. Department of Energy/National Nuclear     
+  Security Administration.  All rights in the program are reserved by Triad     
+  National Security, LLC, and the U.S. Department of Energy/National Nuclear    
+  Security Administration. The Government is granted for itself and others      
+  acting on its behalf a nonexclusive, paid-up, irrevocable worldwide license   
+  in this material to reproduce, prepare derivative works, distribute copies    
+  to the public, perform publicly and display publicly, and to permit others to 
+  do so. This software is open source and available under the BSD-3 License.    
+                               -----oOo-----                                    
+ 
+ 
+Output log file: lagrit.out                                                     
+Command log file: lagrit.log                                                    
+ 
+"                                                                               
+ 
+WARNING: Invalid LaGriT generator command: "                                    
+ 
+## prior to running you need to copy the reduced_mesh from the top & bottom DFN 
+## also copy the *pkl files                                                     
+# to run                                                                        
+# lagrit < combine_mesh.lgi                                                     
+# read in mesh 1                                                                
+read/middle_layer.inp/mo_middle                                                 
+read/avs/middle_layer.inp/mo_middle                                             
+cmo/addatt/mo_middle/family_id/VINT/scalar/nelements/linear/permanent/gxaf/0.0  
+finish                                                                          
+geniee                                                                          
+finish                                                                          
+cmo/status/brief                                                                
+ 
+The current-mesh-object(CMO) is: mo_middle                                      
+ 
+  1 Mesh Object name: mo_middle                                                 
+    number of nodes =           398        number of elements =          294    
+    dimensions geometry =         3        element type =                tri    
+    dimensions topology =         2        3 nodes      3 faces      3 edges    
+    boundary flag =        16000000        status =                   active    
+ 
+ 
+finish                                                                          
+finish                                                                          
+# read in mesh 2                                                                
+read/faults.inp/mo_faults/                                                      
+read/avs/faults.inp/mo_faults                                                   
+cmo/addatt/mo_faults/family_id/VINT/scalar/nelements/linear/permanent/gxaf/0.0  
+finish                                                                          
+geniee                                                                          
+finish                                                                          
+cmo/status/brief                                                                
+ 
+The current-mesh-object(CMO) is: mo_faults                                      
+ 
+  1 Mesh Object name: mo_middle                                                 
+    number of nodes =           398        number of elements =          294    
+    dimensions geometry =         3        element type =                tri    
+    dimensions topology =         2        3 nodes      3 faces      3 edges    
+    boundary flag =        16000000        status =                 inactive    
+ 
+  2 Mesh Object name: mo_faults                                                 
+    number of nodes =             8        number of elements =            4    
+    dimensions geometry =         3        element type =                tri    
+    dimensions topology =         2        3 nodes      3 faces      3 edges    
+    boundary flag =        16000000        status =                   active    
+ 
+ 
+finish                                                                          
+finish                                                                          
+# combine mesh 1 and mesh 2 to make final mesh                                  
+addmesh/merge/mo_dfn/mo_middle/mo_faults                                        
+# write to file                                                                 
+dump/combined_dfn.inp/mo_dfn                                                    
+dump/avs/combined_dfn.inp/mo_dfn                                                
+cmo/modatt/-def-/-def-/ioflag/x                                                 
+finish                                                                          
+finish                                                                          
+dump/reduced_mesh.inp/mo_dfn                                                    
+dump/avs/reduced_mesh.inp/mo_dfn                                                
+cmo/modatt/-def-/-def-/ioflag/x                                                 
+finish                                                                          
+finish                                                                          
+finish                                                                          
+LaGriT successfully completed                                                   

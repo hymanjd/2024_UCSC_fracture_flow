@@ -1,0 +1,26 @@
+#
+# Compute mesh to mesh intersection and refine hex mesh
+#
+intersect_elements / MOHEX / MODFN / if_int
+eltset / erefine / if_int / ne / 0
+pset / prefine / eltset erefine
+#
+# If one wants anisotropic mesh refinement, then the 
+# variable REFINE_AMR can be set in parameters_octree_dfn.mlgi
+#
+refine/constant/imt1/linear/element/pset,get,prefine/ &
+    -1.,0.,0./exclusive/amr REFINE_AMR
+#
+# Clean up eltset, pset, and if_int attribute
+#
+eltset / erefine / delete
+pset   / prefine / delete
+cmo / DELATT / MOHEX / if_int
+#
+# Print out diagnostics
+#
+quality
+cmo / status / brief
+#
+finish
+    

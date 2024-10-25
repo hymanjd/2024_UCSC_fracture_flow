@@ -1,0 +1,7 @@
+"                                                                               
+read/middle_layer.inp/mo_middle                                                 
+read/faults.inp/mo_faults/                                                      
+addmesh/merge/mo_dfn/mo_middle/mo_faults                                        
+dump/combined_dfn.inp/mo_dfn                                                    
+dump/reduced_mesh.inp/mo_dfn                                                    
+finish                                                                          

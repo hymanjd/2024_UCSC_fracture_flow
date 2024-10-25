@@ -191,10 +191,9 @@ with open("perm_layer.dat", "a") as fperm:
     fperm.write("")
 
 
-            with open("rock_fehm.dat", "a") as g:
-                g.write(
-                    str(i) + " " + str(i) + " " + "1" + " " + "2165." + " " +
-                    "931." + " " + str(por_var[i - 1]) + "\n")
+with open("rock_fehm.dat", "a") as g:
+    g.write(str(i) + " " + str(i) + " " + "1" + " " + "2165." + " " +
+        "931." + " " + str(por_var[i - 1]) + "\n")
 
 
 

@@ -1,0 +1,11 @@
+#
+# Remove cells from hex mesh based on the level of refinement
+# itetlev is the refinement level. Original mesh itetlev=0
+#
+eltset / edelete / itetlev / eq / NTIMEs
+rmpoint / element / eltset get edelete
+eltset / edelete / release
+rmpoint / compress
+#
+finish
+    

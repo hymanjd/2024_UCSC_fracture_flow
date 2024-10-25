@@ -1,0 +1,18 @@
+#
+# For comments see intersect_refine.mlgi
+#
+intersect_elements / MOHEX_np1 / MODFN / if_int
+eltset / erefine / if_int / ne / 0
+pset / prefine / eltset erefine
+refine/constant/imt1/linear/element/pset,get,prefine/ &
+-1.,0.,0./exclusive/amr REFINE_AMR
+#
+eltset / erefine / delete
+pset   / prefine / delete
+cmo / DELATT / MOHEX_np1 / if_int
+#
+quality
+cmo / status / brief
+#
+finish
+    

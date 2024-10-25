@@ -1,0 +1,7 @@
+
+read / octree_dfn.inp / mo1
+cmo / addatt / mo1 / frac_index / vdouble / scalar / nnodes
+cmo / setatt / mo1 / frac_index / 1 0 0 / 1
+cmo / readatt / mo1 / frac_index / 1, 0, 0 / tag_frac.dat 
+dump / tmp.inp / mo1 
+finish

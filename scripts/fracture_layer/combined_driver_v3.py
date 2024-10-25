@@ -14,6 +14,7 @@ import pandas as pd
 
 jobname = "combined_UDFM"
 DFN = DFNWORKS(jobname,
+               flow_solver="FEHM",
                ncpu=12)
 DFN.params['domainSize']['value'] = [10000.0, 10000.0, 10000.0]
 DFN.params['h']['value'] = 100
@@ -48,8 +49,8 @@ DFN.domain = {"x": 10000, "y": 10000, "z": 10000 }
 src_dir = os.getcwd()
 
 
-# os.symlink('middle_layer/middle_layer.inp', 'middle_layer.inp')
-# os.symlink('faults/faults.inp', 'faults.inp')
+#os.symlink('middle_layer/middle_layer.inp', 'middle_layer.inp')
+#os.symlink('faults/faults.inp', 'faults.inp')
 
 
 lagrit_script = """"
@@ -78,8 +79,9 @@ with open('combine_dfn.lgi', 'w') as fp:
     fp.write(lagrit_script)
 
 import subprocess
-subprocess.call('lagrit < combine_dfn.lgi', shell = True)
+subprocess.call('/Users/kristindickerson/bin/lagrit < combine_dfn.lgi', shell = True)
 
+#exit() 
 
 DFN.make_working_directory(delete=True)
 DFN.check_input()
@@ -91,13 +93,17 @@ MIDDLE_DFN = DFNWORKS(pickle_file = f"{src_dir}/middle_layer/middle_layer.pkl")
 ## combine DFN
 DFN.num_frac = FAULT_DFN.num_frac + MIDDLE_DFN.num_frac 
 DFN.centers = np.concatenate((FAULT_DFN.centers, MIDDLE_DFN.centers))
+DFN.aperture = np.concatenate((FAULT_DFN.aperture, MIDDLE_DFN.aperture))
+DFN.perm = np.concatenate((FAULT_DFN.perm, MIDDLE_DFN.perm))
+DFN.transmissivity = np.concatenate((FAULT_DFN.transmissivity, MIDDLE_DFN.transmissivitycd ))
+
 DFN.polygons = FAULT_DFN.polygons.copy() 
 DFN.polygons = DFN.polygons| MIDDLE_DFN.polygons
 DFN.normal_vectors = np.concatenate((FAULT_DFN.normal_vectors, MIDDLE_DFN.normal_vectors))
 
 os.symlink(f"{src_dir}/reduced_mesh.inp", "reduced_mesh.inp")
 
-DFN.map_to_continuum(l = 1000, orl = 3)
+DFN.map_to_continuum(l = 1000, orl = 2)
 DFN.upscale(mat_perm=1e-15, mat_por=0.01)
 
 # load z values 
@@ -131,4 +137,15 @@ with open("color_mesh.lgi", "w") as fp:
     fp.write(lagrit_script)
 
 subprocess.call('lagrit < color_mesh.lgi', shell = True)
+
+#DFN.correct_stor_file()
+#os.symlink(dfnFlow_file, 'fehmn.files')
+#DFN.fehm()
+
+
+# DFN.zone2ex(zone_file='all')
+
+# DFN.pflotran()
+# DFN.parse_pflotran_vtk_python()
+# DFN.pflotran_cleanup()
 

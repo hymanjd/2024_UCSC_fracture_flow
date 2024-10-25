@@ -1,0 +1,199 @@
+infile parameters_octree_dfn.mlgi                                               
+define/FTYPE/avs                                                                
+define/FNAME/reduced_mesh.inp                                                   
+define/MOHEX/mohex                                                              
+define/MOTET/motet                                                              
+define/REFINE_AMR/123                                                           
+define/N_OCTREE_REFINE/2                                                        
+define/N_OCTREE_REFINE_M1/1                                                     
+define/N_OCTREE_np1/3                                                           
+define/N_OCTREE_np1_M1/2                                                        
+define/X0/-5000.000000000000                                                    
+define/X1/5000.000000000000                                                     
+define/Y0/-5000.000000000000                                                    
+define/Y1/5000.000000000000                                                     
+define/Z0/-5000.000000000000                                                    
+define/Z1/5000.000000000000                                                     
+define/XMAX/4999.000000000000                                                   
+define/XMIN/-4999.000000000000                                                  
+define/YMAX/4999.000000000000                                                   
+define/YMIN/-4999.000000000000                                                  
+define/ZMAX/4999.000000000000                                                   
+define/ZMIN/-4999.000000000000                                                  
+define/NX/11                                                                    
+define/NY/11                                                                    
+define/NZ/11                                                                    
+finish                                                                          
+read/FTYPE/FNAME/MODFN                                                          
+cmo/printatt/MODFN/-xyz-/minmax                                                 
+infile build_octree.mlgi                                                        
+cmo/create/MOHEX///hex                                                          
+createpts/brick/xyz/NX NY NZ/X0 Y0 Z0/X1 Y1 Z1/1 1 1                            
+cmo/setatt/MOHEX/imt/1 0 0/1                                                    
+cmo/setatt/MOHEX/itetclr/1 0 0/1                                                
+resetpts/itp                                                                    
+cmo/printatt/MOHEX/-xyz-/minmax                                                 
+cmo/select/MODFN                                                                
+cmo/printatt/MODFN/-xyz-/minmax                                                 
+cmo/copy/MOHEX_np1/MOHEX                                                        
+loop/do/NTIMEs/1 N_OCTREE_REFINE 1/loop_end infile intersect_refine.mlgi        
+intersect_elements/MOHEX/MODFN/if_int                                           
+eltset/erefine/if_int/ne/0                                                      
+pset/prefine/eltset erefine                                                     
+refine/constant/imt1/linear/element/pset,get,prefine/-1.,0.,0./exclusive/amr REF
+INE_AMR                                                                         
+eltset/erefine/delete                                                           
+pset/prefine/delete                                                             
+cmo/DELATT/MOHEX/if_int                                                         
+quality                                                                         
+cmo/status/brief                                                                
+finish                                                                          
+intersect_elements/MOHEX/MODFN/if_int                                           
+eltset/erefine/if_int/ne/0                                                      
+pset/prefine/eltset erefine                                                     
+refine/constant/imt1/linear/element/pset,get,prefine/-1.,0.,0./exclusive/amr REF
+INE_AMR                                                                         
+eltset/erefine/delete                                                           
+pset/prefine/delete                                                             
+cmo/DELATT/MOHEX/if_int                                                         
+quality                                                                         
+cmo/status/brief                                                                
+finish                                                                          
+loop/do/NTIMEs/1 N_OCTREE_np1 1/loop_end infile intersect_refine_np1.mlgi       
+intersect_elements/MOHEX_np1/MODFN/if_int                                       
+eltset/erefine/if_int/ne/0                                                      
+pset/prefine/eltset erefine                                                     
+refine/constant/imt1/linear/element/pset,get,prefine/-1.,0.,0./exclusive/amr REF
+INE_AMR                                                                         
+eltset/erefine/delete                                                           
+pset/prefine/delete                                                             
+cmo/DELATT/MOHEX_np1/if_int                                                     
+quality                                                                         
+cmo/status/brief                                                                
+finish                                                                          
+intersect_elements/MOHEX_np1/MODFN/if_int                                       
+eltset/erefine/if_int/ne/0                                                      
+pset/prefine/eltset erefine                                                     
+refine/constant/imt1/linear/element/pset,get,prefine/-1.,0.,0./exclusive/amr REF
+INE_AMR                                                                         
+eltset/erefine/delete                                                           
+pset/prefine/delete                                                             
+cmo/DELATT/MOHEX_np1/if_int                                                     
+quality                                                                         
+cmo/status/brief                                                                
+finish                                                                          
+intersect_elements/MOHEX_np1/MODFN/if_int                                       
+eltset/erefine/if_int/ne/0                                                      
+pset/prefine/eltset erefine                                                     
+refine/constant/imt1/linear/element/pset,get,prefine/-1.,0.,0./exclusive/amr REF
+INE_AMR                                                                         
+eltset/erefine/delete                                                           
+pset/prefine/delete                                                             
+cmo/DELATT/MOHEX_np1/if_int                                                     
+quality                                                                         
+cmo/status/brief                                                                
+finish                                                                          
+finish                                                                          
+intersect_elements/MOHEX/MODFN/if_int                                           
+eltset/einter/if_int/ne/0                                                       
+pset/pinter/eltset einter                                                       
+cmo/setatt/MOHEX/itetclr/1 0 0/1                                                
+cmo/setatt/MOHEX/itetclr/eltset get einter/2                                    
+cmo/setatt/MOHEX/imt/1 0 0/1                                                    
+cmo/setatt/MOHEX/imt/pset get pinter/2                                          
+intersect_elements/MOHEX_np1/MODFN/if_int                                       
+eltset/einter/if_int/ne/0                                                       
+pset/pinter/eltset einter                                                       
+cmo/setatt/MOHEX_np1/itetclr/1 0 0/1                                            
+cmo/setatt/MOHEX_np1/itetclr/eltset get einter/2                                
+cmo/setatt/MOHEX_np1/imt/1 0 0/1                                                
+cmo/setatt/MOHEX_np1/imt/pset get pinter/2                                      
+infile hex_to_tet.mlgi                                                          
+cmo/create/MOTET                                                                
+copypts/MOTET/MOHEX                                                             
+cmo/select/MOTET                                                                
+filter 1 0 0                                                                    
+rmpoint/compress                                                                
+cmo/setatt/MOTET/imt/1 0 0/1                                                    
+cmo/setatt/MOTET/itp/1 0 0/0                                                    
+sort/MOTET/index/ascending/ikey/xic yic zic                                     
+reorder/MOTET/ikey                                                              
+cmo/DELATT/MOTET/ikey                                                           
+connect/noadd                                                                   
+cmo/setatt/MOTET/itetclr/1 0 0/1                                                
+resetpts/itp                                                                    
+cmo/create/MOTET_np1                                                            
+copypts/MOTET_np1/MOHEX_np1                                                     
+cmo/select/MOTET_np1                                                            
+filter 1 0 0                                                                    
+rmpoint/compress                                                                
+cmo/setatt/MOTET_np1/imt/1 0 0/1                                                
+cmo/setatt/MOTET_np1/itp/1 0 0/0                                                
+sort/MOTET_np1/index/ascending/ikey/xic yic zic                                 
+reorder/MOTET_np1/ikey                                                          
+cmo/DELATT/MOTET_np1/ikey                                                       
+connect/noadd                                                                   
+cmo/setatt/MOTET_np1/itetclr/1 0 0/1                                            
+resetpts/itp                                                                    
+finish                                                                          
+grid2grid/tree_to_fe/mohex2/MOHEX                                               
+cmo/delete/MOHEX                                                                
+cmo/select/mohex2                                                               
+loop/do/NTIMEs/0 N_OCTREE_REFINE_M1 1/loop_end infile remove_cells.mlgi         
+eltset/edelete/itetlev/eq/NTIMEs                                                
+rmpoint/element/eltset get edelete                                              
+eltset/edelete/release                                                          
+rmpoint/compress                                                                
+finish                                                                          
+eltset/edelete/itetlev/eq/NTIMEs                                                
+rmpoint/element/eltset get edelete                                              
+eltset/edelete/release                                                          
+rmpoint/compress                                                                
+finish                                                                          
+cmo/select/mohex2                                                               
+cmo/DELATT/mohex2/if_int                                                        
+intersect_elements/mohex2/MODFN/if_int                                          
+cmo/select/mohex2                                                               
+eltset/edelete/if_int/eq/0                                                      
+rmpoint/element/eltset get edelete                                              
+eltset/edelete/release                                                          
+rmpoint/compress                                                                
+dump/avs/mohex2.inp/mohex2                                                      
+dump/avs/MOTET_np1.inp/MOTET_np1                                                
+dump/avs/MOTET.inp/MOTET                                                        
+cmo/select/MOTET                                                                
+cmo/modatt/MOTET/itp/ioflag/l                                                   
+cmo/modatt/MOTET/isn/ioflag/l                                                   
+cmo/modatt/MOTET/icr/ioflag/l                                                   
+define/ZONE/1                                                                   
+define/FOUT/boundary_top                                                        
+pset/top/attribute/zic/1 0 0/gt/ZMAX                                            
+pset/top/zone/FOUT/ascii/ZONE                                                   
+define/ZONE/2                                                                   
+define/FOUT/boundary_bottom                                                     
+pset/bottom/attribute/zic/1 0 0/lt/ZMIN                                         
+pset/bottom/zone/FOUT/ascii/ZONE                                                
+define/ZONE/3                                                                   
+define/FOUT/boundary_left_w                                                     
+pset/left_w/attribute/xic/1 0 0/lt/XMIN                                         
+pset/left_w/zone/FOUT/ascii/ZONE                                                
+define/ZONE/4                                                                   
+define/FOUT/boundary_front_n                                                    
+pset/front_n/attribute/yic/1 0 0/gt/YMAX                                        
+pset/front_n/zone/FOUT/ascii/ZONE                                               
+define/ZONE/5                                                                   
+define/FOUT/boundary_right_e                                                    
+pset/right_e/attribute/xic/1 0 0/gt/XMAX                                        
+pset/right_e/zone/FOUT/ascii/ZONE                                               
+define/ZONE/6                                                                   
+define/FOUT/boundary_back_s                                                     
+pset/back_s/attribute/yic/1 0 0/lt/YMIN                                         
+pset/back_s/zone/FOUT/ascii/ZONE                                                
+trans/1 0 0/0. 0. 0./0,0,0                                                      
+dump/pflotran/full_mesh/MOTET/nofilter_zero                                     
+dump/avs2/octree_dfn.inp/MOTET                                                  
+dump/coord/octree_dfn/MOTET                                                     
+dump/stor/octree_dfn/MOTET                                                      
+dump/zone_imt/octree_dfn/MOTET                                                  
+dump/zone_outside/octree_dfn/MOTET                                              
+finish                                                                          

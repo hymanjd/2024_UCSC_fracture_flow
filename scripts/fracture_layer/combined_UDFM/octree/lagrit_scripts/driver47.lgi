@@ -1,0 +1,19 @@
+read / avs / ex_xyz47_2.inp / mo_vertex
+    cmo / addatt / mo_vertex / area_tri / vdouble / scalar / nnodes
+    cmo / readatt / mo_vertex / area_tri / 1 0 0 / ex_area47_2.table
+
+    read / avs / frac47.inp / frac
+    cmo / addatt / frac / area_sum / vdouble / scalar / nnodes
+
+    upscale / sum / frac, area_sum / 1 0 0 / mo_vertex, area_tri
+
+    cmo / DELATT / frac / itp1
+    cmo / DELATT / frac / icr1
+    cmo / DELATT / frac / isn1 
+    cmo / DELATT / frac / dfield 
+
+    dump / avs / area_sum47.table / frac / 0 0 2 0
+        
+    cmo / delete / mo_vertex
+    cmo / delete / frac
+    finish
